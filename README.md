@@ -8,7 +8,7 @@ Project Start Date: 2.2.2024
 
 ### Team Members:
 
-- [Stephanie G. Johnson]()
+- [Stephanie G. Johnson](https://github.com/StepheeGee)
 
 - [Negin Koushkakinejad](https://github.com/neginkou)
 
