@@ -2,6 +2,10 @@
 
 ## Team: The East Code
 
+## Date
+
+Project Start Date: 2.2.2024
+
 ### Team Members:
 
 - [Stephanie G. Johnson]()
@@ -18,13 +22,6 @@
 
 Briefly describe the purpose and goals of your project.
 
-## Author
-
-Your Name
-
-## Date
-
-Project Start Date
 
 ### Overview
 
