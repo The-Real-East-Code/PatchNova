@@ -6,9 +6,13 @@ import distro
 import logging
 from logging.handlers import RotatingFileHandler
 import pkgutil
-import winreg
+import platform
+if platform.system() == 'Windows':
+    import winreg
 from bs4 import BeautifulSoup
 import urllib.request
+
+
 
 class UpdateCheckerApp:
     def __init__(self, root):
