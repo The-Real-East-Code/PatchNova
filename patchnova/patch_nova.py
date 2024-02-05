@@ -1,11 +1,12 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, filedialog, Listbox, Scrollbar
 import platform
 import subprocess
 import distro
 import logging
 from logging.handlers import RotatingFileHandler
 import pkgutil
+import winreg
 from bs4 import BeautifulSoup
 import urllib.request
 
@@ -31,6 +32,9 @@ class UpdateCheckerApp:
         # Call get_hardware_info here to display system information when the app starts
         self.get_hardware_info()
 
+        # Call get_hardware_info here to display system information when the app starts
+        self.get_hardware_info()
+
         self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_updates_button.pack(pady=10)
 
@@ -39,6 +43,8 @@ class UpdateCheckerApp:
 
         self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.choose_log_location_button.pack(pady=10)
+        
+    
 
     def create_custom_dialog(self, title, message):
         dialog = tk.Toplevel(self.root)
@@ -117,58 +123,46 @@ class UpdateCheckerApp:
             self.logger.info("Update process completed.")
 
     def check_software_updates(self):
-        try:
-            # Get the current operating system
-            current_os = platform.system().lower()
+        # Get installed programs from registry
+        installed_programs = {}
+        reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Uninstall")
+        for i in range(winreg.QueryInfoKey(reg_key)[0]):
+            try:
+                key = winreg.EnumKey(reg_key, i)
+                val = winreg.OpenKey(reg_key, key)
+                name = winreg.QueryValueEx(val, "DisplayName")[0]
+                version = winreg.QueryValueEx(val, "DisplayVersion")[0]
+                installed_programs[name] = version
+            except OSError:
+                pass
 
-            # Check updates based on the operating system
-            if current_os == 'linux':
-                # Use the appropriate command for your Linux package manager (e.g., 'dpkg -l' for Debian-based systems)
-                process = subprocess.Popen(['dpkg', '-l'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                # ... (rest of the Linux-specific code)
+        # Create popup 
+        popup = tk.Toplevel(self.root)
+        listbox = Listbox(popup)
+        listbox.pack()
 
-            elif current_os == 'darwin':  # macOS
-                # Use the appropriate command for macOS package manager (e.g., 'brew list --versions')
-                process = subprocess.Popen(['brew', 'list', '--versions'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                # ... (rest of the macOS-specific code)
+        # Check updates
+        for name, version in installed_programs.items():
+            update = self.check_update(name)  # Use self.check_update
+            if update:
+                listbox.insert(tk.END, f"{name}: {version} -> {update}")
 
-            elif current_os == 'windows':
-                # Use the appropriate command for Windows package manager (e.g., 'choco list --local-only')
-                process = subprocess.Popen(['choco', 'list', '--local-only'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                # ... (rest of the Windows-specific code)
+        # Add scrollbar
+        scrollbar = Scrollbar(popup, command=listbox.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        listbox.config(yscrollcommand=scrollbar.set)
 
-            else:
-                self.logger.warning(f"Unsupported operating system: {current_os}")
-                return
+    def check_update(self, name):  # Define check_update within the class
+        # Check website, API, etc and return latest version
+        return "2.0"
 
-            output, _ = process.communicate()
-
-            # Parse the output to get the installed programs and their versions
-            installed_programs = {}
-            for line in output.split('\n')[5:]:
-                columns = line.split()
-                if len(columns) >= 3:
-                    program_name = columns[1]
-                    program_version = columns[2]
-                    installed_programs[program_name] = program_version
-
-            # Check for updates and notify the user
-            for program_name, installed_version in installed_programs.items():
-                latest_version = self.get_latest_version(program_name)
-                if installed_version < latest_version:
-                    self.create_custom_dialog("Software Update", f"Update available for {program_name}: {installed_version} -> {latest_version}")
-                    self.logger.info(f"Software Update checked for {program_name}")
-                else:
-                    self.create_custom_dialog("Software Update", f"{program_name} is up to date.")
-                    self.logger.info(f"{program_name} is up to date")
-
-        except Exception as e:
-            self.logger.error(f"Error checking software updates: {str(e)}")
-
-    def get_latest_version(self, program_name):
-        # Implement this function to retrieve the latest version for the given program
-        # You may need to use a different method based on the software you're checking
-        pass
+    def choose_log_location(self):
+        log_location = filedialog.askdirectory()
+        if log_location:
+            # Update log file locations
+            self.history_handler.baseFilename = f"{log_location}/update_history.log"
+            self.error_handler.baseFilename = f"{log_location}/error_log.log"
+            self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
 
     def choose_log_location(self):
         log_location = filedialog.askdirectory()
