@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
-from tkinter import ttk  # For progress bar
+from tkinter import ttk, messagebox, filedialog
 import platform
 import urllib.request
 import webbrowser
@@ -33,7 +32,13 @@ class UpdateCheckerApp:
         # Display hardware information with increased padding
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # Increase vertical padding
+
+        # Loading indicator
+        self.loading_indicator = ttk.Progressbar(root, orient="horizontal", mode="indeterminate")
         
+        # Status label
+        self.status_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
+
         # Larger buttons with increased padding
         self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_updates_button.pack(pady=10)  # Increase vertical padding
@@ -88,6 +93,18 @@ class UpdateCheckerApp:
     def get_user_consent(self):
         return messagebox.askyesno("User Consent", "Do you want to check for updates?")
     
+    def show_loading_indicator(self):
+        self.loading_indicator.pack(pady=10)
+        self.loading_indicator.start()
+
+    def hide_loading_indicator(self):
+        self.loading_indicator.stop()
+        self.loading_indicator.pack_forget()
+
+    def update_status_label(self, text):
+        self.status_label.config(text=text)
+        self.status_label.pack(pady=10)
+
     def web_scrape_for_windows_updates(self):
         # Web scraping logic for Windows updates
         windows_update_url = "https://support.microsoft.com/en-us/windows/release-information"
@@ -121,6 +138,12 @@ class UpdateCheckerApp:
         
     def perform_browser_update_check(self, browser_name, update_url):
         try:
+            # Show loading indicator
+            self.show_loading_indicator()
+            
+            # Update status label
+            self.update_status_label(f"Checking updates for {browser_name}...")
+
             with urllib.request.urlopen(update_url) as response:
                 html = response.read()
                 soup = BeautifulSoup(html, 'html.parser')
@@ -138,8 +161,10 @@ class UpdateCheckerApp:
         except Exception as e:
             messagebox.showinfo(f"Error", f"Error occurred while checking updates for {browser_name}: {str(e)}")
             self.logger.error(f"Error occurred while checking updates for {browser_name}: {str(e)}")
-
-
+        finally:
+            # Hide loading indicator and clear status label
+            self.hide_loading_indicator()
+            self.update_status_label("")
 
     def check_updates(self):
         self.get_hardware_info()
