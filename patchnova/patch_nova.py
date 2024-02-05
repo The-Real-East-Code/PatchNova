@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, filedialog, Listbox, Scrollbar
 import platform
 import subprocess
 import distro
@@ -7,10 +7,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 import pkgutil
 import winreg
-from tkinter import Listbox
-from tkinter import Scrollbar
-
-
+from bs4 import BeautifulSoup
+import urllib.request
 
 class UpdateCheckerApp:
     def __init__(self, root):
@@ -30,6 +28,9 @@ class UpdateCheckerApp:
 
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)
+        
+        # Call get_hardware_info here to display system information when the app starts
+        self.get_hardware_info()
 
         # Call get_hardware_info here to display system information when the app starts
         self.get_hardware_info()
@@ -163,7 +164,6 @@ class UpdateCheckerApp:
             self.error_handler.baseFilename = f"{log_location}/error_log.log"
             self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
 
-
     def choose_log_location(self):
         log_location = filedialog.askdirectory()
         if log_location:
@@ -171,6 +171,7 @@ class UpdateCheckerApp:
             self.history_handler.baseFilename = f"{log_location}/update_history.log"
             self.error_handler.baseFilename = f"{log_location}/error_log.log"
             self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
