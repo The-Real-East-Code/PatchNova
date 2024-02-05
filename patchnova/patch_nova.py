@@ -6,6 +6,11 @@ import distro
 import logging
 from logging.handlers import RotatingFileHandler
 import pkgutil
+import winreg
+from tkinter import Listbox
+from tkinter import Scrollbar
+
+
 
 class UpdateCheckerApp:
     def __init__(self, root):
@@ -26,6 +31,9 @@ class UpdateCheckerApp:
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)
 
+        # Call get_hardware_info here to display system information when the app starts
+        self.get_hardware_info()
+
         self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_updates_button.pack(pady=10)
 
@@ -34,6 +42,8 @@ class UpdateCheckerApp:
 
         self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.choose_log_location_button.pack(pady=10)
+        
+    
 
     def create_custom_dialog(self, title, message):
         dialog = tk.Toplevel(self.root)
@@ -112,25 +122,47 @@ class UpdateCheckerApp:
             self.logger.info("Update process completed.")
 
     def check_software_updates(self):
-        # Get a list of installed Python packages
-        installed_packages = {pkg.key: pkg.version for pkg in pkgutil.iter_modules()}
-        # You would need to customize this part based on the structure of the update information for your software
-        # Here, we are assuming that the update information is available on PyPI
-        for package_name, installed_version in installed_packages.items():
-            # Check PyPI for updates
-            pypi_url = f"https://pypi.org/project/{package_name}/"
-            with urllib.request.urlopen(pypi_url) as response:
-                html = response.read()
-                soup = BeautifulSoup(html, 'html.parser')
-                latest_version_tag = soup.find('span', class_='css-1rzqfyi')
-                if latest_version_tag:
-                    latest_version = latest_version_tag.text.strip()
-                    if installed_version < latest_version:
-                        self.create_custom_dialog("Software Update", f"Update available for {package_name}: {installed_version} -> {latest_version}")
-                        self.logger.info(f"Software Update checked for {package_name}")
-                    else:
-                        self.create_custom_dialog("Software Update", f"{package_name} is up to date.")
-                        self.logger.info(f"{package_name} is up to date")
+        # Get installed programs from registry
+        installed_programs = {}
+        reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Uninstall")
+        for i in range(winreg.QueryInfoKey(reg_key)[0]):
+            try:
+                key = winreg.EnumKey(reg_key, i)
+                val = winreg.OpenKey(reg_key, key)
+                name = winreg.QueryValueEx(val, "DisplayName")[0]
+                version = winreg.QueryValueEx(val, "DisplayVersion")[0]
+                installed_programs[name] = version
+            except OSError:
+                pass
+
+        # Create popup 
+        popup = tk.Toplevel(self.root)
+        listbox = Listbox(popup)
+        listbox.pack()
+
+        # Check updates
+        for name, version in installed_programs.items():
+            update = self.check_update(name)  # Use self.check_update
+            if update:
+                listbox.insert(tk.END, f"{name}: {version} -> {update}")
+
+        # Add scrollbar
+        scrollbar = Scrollbar(popup, command=listbox.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        listbox.config(yscrollcommand=scrollbar.set)
+
+    def check_update(self, name):  # Define check_update within the class
+        # Check website, API, etc and return latest version
+        return "2.0"
+
+    def choose_log_location(self):
+        log_location = filedialog.askdirectory()
+        if log_location:
+            # Update log file locations
+            self.history_handler.baseFilename = f"{log_location}/update_history.log"
+            self.error_handler.baseFilename = f"{log_location}/error_log.log"
+            self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
+
 
     def choose_log_location(self):
         log_location = filedialog.askdirectory()
