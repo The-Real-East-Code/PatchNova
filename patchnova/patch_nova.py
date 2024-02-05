@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from tkinter import ttk  # For improved styling capabilities
 import platform
 import urllib.request
 import webbrowser
@@ -5,8 +8,6 @@ import pkg_resources
 import logging
 import subprocess
 import distro
-import tkinter as tk
-from tkinter import messagebox, filedialog
 from bs4 import BeautifulSoup
 from logging.handlers import RotatingFileHandler
 
@@ -14,26 +15,55 @@ class UpdateCheckerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Update Checker")
+        
+        # Increase the initial size of the main window
+        self.root.geometry('800x400')  # Adjust width and height as needed
+        self.root.configure(bg='#333333')  # Dark background for the main window
+        
+        # Enhanced font and color configuration for larger UI elements
+        self.font_style = ("Arial", 14)  # Increase font size
+        self.button_color = "#4609d4"
+        self.text_color = "#FFFFFF"
+        self.button_text_color = "#FFFFFF"
+        self.label_bg_color = "#333333"
+        
         # Initialize logging
         self.setup_logging()
-        # Display hardware information
-        self.hardware_info_label = tk.Label(root, text="")
-        self.hardware_info_label.pack()
-        # Button to check for updates
-        self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates)
-        self.check_updates_button.pack()
-        # Button to check for software updates
-        self.check_software_updates_button = tk.Button(root, text="Check Software Updates", command=self.check_software_updates)
-        self.check_software_updates_button.pack()
-        # Button to choose log file location
-        self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location)
-        self.choose_log_location_button.pack()
+        
+        # Display hardware information with increased padding
+        self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
+        self.hardware_info_label.pack(pady=20)  # Increase vertical padding
+        
+        # Larger buttons with increased padding
+        self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.check_updates_button.pack(pady=10)  # Increase vertical padding
+        
+        self.check_software_updates_button = tk.Button(root, text="Check Software Updates", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
+        
+        self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.choose_log_location_button.pack(pady=10)  # Increase vertical padding
+
+
+    def create_custom_dialog(self, title, message):
+        dialog = tk.Toplevel(self.root)
+        dialog.title(title)
+        dialog.configure(bg='#333333')  # Dark background for dialog
+        dialog.geometry("600x400")  # Adjust size as needed
+        
+        # Message label
+        message_label = tk.Label(dialog, text=message, wraplength=350, bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
+        message_label.pack(padx=10, pady=10)
+        
+        # Close button
+        close_button = tk.Button(dialog, text="Close", command=dialog.destroy, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        close_button.pack(pady=10)
     
     
     def create_custom_dialog(self, title, message):
         dialog = tk.Toplevel(self.root)
         dialog.title(title)
-        dialog.geometry("400x200")  # Adjust size as needed
+        dialog.geometry("600x400")  # Adjust size as needed
 
         # Message label
         message_label = tk.Label(dialog, text=message, wraplength=350)  # Wrap text to fit the dialog
