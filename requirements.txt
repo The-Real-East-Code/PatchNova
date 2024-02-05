@@ -20,6 +20,7 @@ pytest==7.4.4
 python-dotenv==1.0.1
 requests==2.31.0
 rich==13.7.0
+setuptools==69.0.3
 soupsieve==2.5
 tk==0.1.0
 tomli==2.0.1
