@@ -1,14 +1,14 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar
 import platform
-import urllib.request
-import webbrowser
-import pkg_resources
-import logging
 import subprocess
 import distro
-from bs4 import BeautifulSoup
+import logging
 from logging.handlers import RotatingFileHandler
+import pkgutil
+import winreg
+from bs4 import BeautifulSoup
+import urllib.request
 
 class UpdateCheckerApp:
     def __init__(self, root):
@@ -21,15 +21,13 @@ class UpdateCheckerApp:
         
         # Enhanced font and color configuration for larger UI elements
         self.font_style = ("Consolas", 14)  # Increase font size
-        self.button_color = "#15065c"  
+        self.button_color = "#15065c"
         self.text_color = "#FFFFFF" 
         self.button_text_color = "#FFFFFF"
         self.label_bg_color = "#333333"
-        
-        # Initialize logging
+
         self.setup_logging()
-        
-        # Display hardware information with increased padding
+
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # Increase vertical padding
 
@@ -65,6 +63,7 @@ class UpdateCheckerApp:
         # Close button
         close_button = tk.Button(dialog, text="Close", command=dialog.destroy, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         close_button.pack(pady=10)
+    
     
     def setup_logging(self):
         # Create a logger
@@ -165,6 +164,7 @@ class UpdateCheckerApp:
             # Hide loading indicator and clear status label
             self.hide_loading_indicator()
             self.update_status_label("")
+            
 
     def check_updates(self):
         self.get_hardware_info()
@@ -179,7 +179,7 @@ class UpdateCheckerApp:
                 # Check for updates on Firefox and Chrome
                 self.check_browser_updates("firefox", "https://www.mozilla.org/en-US/firefox/releases/")
                 self.check_browser_updates("chrome", "https://chromereleases.googleblog.com/")
-                
+
             elif platform.system() == 'Darwin':
                 # Trigger macOS Update
                 subprocess.run(["softwareupdate", "-i", "-a"])
@@ -189,6 +189,7 @@ class UpdateCheckerApp:
                 self.check_browser_updates("firefox", "https://www.mozilla.org/en-US/firefox/releases/")
                 self.check_browser_updates("chrome", "https://chromereleases.googleblog.com/")
 
+                
             elif platform.system() == 'Linux':
                 # Use distro.id() to get the distribution ID as a string
                 dist_id = distro.id()
@@ -215,37 +216,49 @@ class UpdateCheckerApp:
                 self.create_custom_dialog("Unsupported System", "Updates are not supported for the current operating system.")
             self.logger.info("Update process completed.")
 
-        else:
-            self.create_custom_dialog("Unsupported System", "Updates are not supported for the current operating system.")
 
     def check_software_updates(self):
-        # Get a list of installed Python packages
-        installed_packages = {pkg.key: pkg.version for pkg in pkg_resources.working_set}
+        # Get installed programs from registry
+        installed_programs = {}
+        reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Uninstall")
+        for i in range(winreg.QueryInfoKey(reg_key)[0]):
+            try:
+                key = winreg.EnumKey(reg_key, i)
+                val = winreg.OpenKey(reg_key, key)
+                name = winreg.QueryValueEx(val, "DisplayName")[0]
+                version = winreg.QueryValueEx(val, "DisplayVersion")[0]
+                installed_programs[name] = version
+            except OSError:
+                pass
 
-        for package_name, installed_version in installed_packages.items():
-            # Check PyPI for updates
-            pypi_url = f"https://pypi.org/project/{package_name}/"
-            with urllib.request.urlopen(pypi_url) as response:
-                html = response.read()
-                soup = BeautifulSoup(html, 'html.parser')
+        # Create popup 
+        popup = tk.Toplevel(self.root)
+        listbox = Listbox(popup)
+        listbox.pack()
 
-                # Attempt to find the version information using different classes
-                version_tag = soup.find('span', class_='package-header__version') or \
-                            soup.find('p', class_='release__version') or \
-                            soup.find('div', class_='version') or \
-                            soup.find('p', class_='sidebar-package-info__latest__version')
+        # Check updates
+        for name, version in installed_programs.items():
+            update = self.check_update(name)  # Use self.check_update
+            if update:
+                listbox.insert(tk.END, f"{name}: {version} -> {update}")
 
-                if version_tag:
-                    latest_version = version_tag.text.strip()
-                    if installed_version < latest_version:
-                        self.create_custom_dialog("Software Update", f"Update available for {package_name}: {installed_version} -> {latest_version}")
-                        self.logger.info(f"Software Update checked for {package_name}")
-                    else:
-                        self.create_custom_dialog("Software Update", f"{package_name} is up to date.")
-                        self.logger.info(f"{package_name} is up to date")
-                else:
-                    self.create_custom_dialog("Software Update", f"Failed to retrieve version information for {package_name}")
-                    self.logger.warning(f"Failed to retrieve version information for {package_name}")
+        # Add scrollbar
+        scrollbar = Scrollbar(popup, command=listbox.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        listbox.config(yscrollcommand=scrollbar.set)
+
+    def check_update(self, name):  # Define check_update within the class
+        # Check website, API, etc and return latest version
+        return "2.0"
+
+    def choose_log_location(self):
+        log_location = filedialog.askdirectory()
+        if log_location:
+            # Update log file locations
+            self.history_handler.baseFilename = f"{log_location}/update_history.log"
+            self.error_handler.baseFilename = f"{log_location}/error_log.log"
+            self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
+            
 
     def choose_log_location(self):
         log_location = filedialog.askdirectory()
