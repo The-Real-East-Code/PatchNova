@@ -222,18 +222,13 @@ class UpdateCheckerApp:
 
 
     def check_software_updates(self):
-        # Get installed programs from registry
-        installed_programs = {}
-        reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Uninstall")
-        for i in range(winreg.QueryInfoKey(reg_key)[0]):
-            try:
-                key = winreg.EnumKey(reg_key, i)
-                val = winreg.OpenKey(reg_key, key)
-                name = winreg.QueryValueEx(val, "DisplayName")[0]
-                version = winreg.QueryValueEx(val, "DisplayVersion")[0]
-                installed_programs[name] = version
-            except OSError:
-                pass
+        if platform.system() == "Windows":
+            installed_programs = self.get_installed_programs_windows()
+        elif platform.system() == "Darwin":
+            installed_programs = self.get_installed_programs_mac()
+        else:
+            print("Unsupported operating system")
+            return
 
         # Create popup 
         popup = tk.Toplevel(self.root)
@@ -250,6 +245,42 @@ class UpdateCheckerApp:
         scrollbar = Scrollbar(popup, command=listbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         listbox.config(yscrollcommand=scrollbar.set)
+
+    def get_installed_programs_windows(self):
+        installed_programs = {}
+        reg_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall"
+        try:
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg_key:
+                for i in range(winreg.QueryInfoKey(reg_key)[0]):
+                    try:
+                        key = winreg.EnumKey(reg_key, i)
+                        with winreg.OpenKey(reg_key, key) as val:
+                            name = winreg.QueryValueEx(val, "DisplayName")[0]
+                            version = winreg.QueryValueEx(val, "DisplayVersion")[0]
+                            installed_programs[name] = version
+                    except OSError:
+                        pass
+        except FileNotFoundError:
+            pass
+        return installed_programs
+    def get_installed_programs_mac(self):
+        installed_programs = {}
+        try:
+            output = subprocess.check_output(["/usr/sbin/system_profiler", "SPApplicationsDataType", "-xml"])
+            output = output.decode("utf-8").split("\n")
+            for line in output:
+                if "<key>_name</key>" in line:
+                    name = line.split("<string>")[1].split("</string>")[0]
+                elif "<key>version</key>" in line:
+                    version = line.split("<string>")[1].split("</string>")[0]
+                    installed_programs[name] = version
+        except subprocess.CalledProcessError:
+            pass
+        return installed_programs
+
+    def check_update(self, name):  
+        # Placeholder function to check for updates
+        return "2.0"  # Dummy update version
 
     def check_update(self, name):  # Define check_update within the class
         # Check website, API, etc and return latest version
