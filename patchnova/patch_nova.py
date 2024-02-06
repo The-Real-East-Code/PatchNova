@@ -36,6 +36,11 @@ class UpdateCheckerApp:
         
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # Increase vertical padding
+        # Display hardware information
+        self.hardware_info_label = tk.Label(root, text="")
+        self.hardware_info_label.pack()
+        
+        self.get_hardware_info()
 
         # Loading indicator
         self.loading_indicator = ttk.Progressbar(root, orient="horizontal", mode="indeterminate")
@@ -44,17 +49,16 @@ class UpdateCheckerApp:
         self.status_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
 
         # Larger buttons with increased padding
-        self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.check_updates_button = tk.Button(root, text="System Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_updates_button.pack(pady=10)  # Increase vertical padding
         
-        self.check_software_updates_button = tk.Button(root, text="Check Software Updates", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.check_software_updates_button = tk.Button(root, text="Check Installed Software", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
         
-        self.check_browser_updates_button = tk.Button(root, text="Check Browser Updates", command=self.check_browser_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
-        self.check_browser_updates_button.pack(pady=10)  # Increase vertical padding
         
-        self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
-        self.choose_log_location_button.pack(pady=10)  # Increase vertical padding
+        
+        # self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        # self.choose_log_location_button.pack(pady=10)  # Increase vertical padding
 
         self.setup_logging()
 
