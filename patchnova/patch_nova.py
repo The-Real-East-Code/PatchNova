@@ -30,9 +30,8 @@ class UpdateCheckerApp:
         self.button_text_color = "#FFFFFF"
         self.label_bg_color = "#333333"
 
-        # Increase the initial size of the main window
-        self.show_logs_button = tk.Button(root, text="Show Logs", command=self.show_logs, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
-        self.show_logs_button.pack(pady=10)
+     
+
         
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # Increase vertical padding
@@ -55,10 +54,8 @@ class UpdateCheckerApp:
         self.check_software_updates_button = tk.Button(root, text="Check Installed Software", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
         
-        
-        
-        # self.choose_log_location_button = tk.Button(root, text="Choose Log Location", command=self.choose_log_location, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
-        # self.choose_log_location_button.pack(pady=10)  # Increase vertical padding
+        self.show_logs_button = tk.Button(root, text="Show Logs", command=self.show_logs, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.show_logs_button.pack(pady=10)
 
         self.setup_logging()
 
@@ -78,24 +75,9 @@ class UpdateCheckerApp:
         error_log_tab = ttk.Frame(tab_control)
         tab_control.add(error_log_tab, text='Error Log')
         error_log_text = Text(error_log_tab, wrap='word', yscrollcommand=lambda *args: True)
+        error_log_text.pack(expand=True, fill='both')
         
-        tab_control.pack(expand=True, fill='both')  # Add tab_control to the UI
-        error_log_tab = ttk.Frame(tab_control)
-        tab_control.add(error_log_tab, text='Error Log')
-        error_log_text = Text(error_log_tab, wrap='word', yscrollcommand=lambda *args: True)
-        update_history_tab = ttk.Frame(tab_control)  # Define update_history_tab variable
-        tab_control.add(update_history_tab, text='Update History')  # Add update_history_tab to the tab_control
-
-        log_dialog = tk.Toplevel(self.root)  # Define log_dialog variable
-        log_dialog.title("Logs")
-        log_dialog.geometry("800x600")  # Adjust size as needed
-        log_dialog.configure(bg='#333333')
-        tab_control = ttk.Notebook(log_dialog)  # Define tab_control variable
-
-        update_history_tab = ttk.Frame(tab_control)
-        tab_control.add(update_history_tab, text='Update History')
-        update_history_text = Text(update_history_tab, wrap='word', yscrollcommand=lambda *args: True)  # Define update_history_text variable
-        update_history_text.pack(expand=True, fill='both')  # Add update_history_text to the UI
+        tab_control.pack(expand=True, fill='both')  
 
         with open("update_history.log", "r") as file:
             update_history_text.insert('1.0', file.read())
@@ -118,23 +100,6 @@ class UpdateCheckerApp:
         # Status label
         self.status_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
 
-        # Larger buttons with increased padding
-        self.check_updates_button = tk.Button(root, text="Check for Updates", command=self.check_updates,
-                                              bg=self.button_color, fg=self.button_text_color,
-                                              font=self.font_style)
-        self.check_updates_button.pack(pady=10)  # Increase vertical padding
-
-        self.check_software_updates_button = tk.Button(root, text="Check Software Updates",
-                                                       command=self.check_software_updates,
-                                                       bg=self.button_color, fg=self.button_text_color,
-                                                       font=self.font_style)
-        self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
-
-        self.choose_log_location_button = tk.Button(root, text="Choose Log Location",
-                                                    command=self.choose_log_location,
-                                                    bg=self.button_color, fg=self.button_text_color,
-                                                    font=self.font_style)
-        self.choose_log_location_button.pack(pady=10)  # Increase vertical padding
 
     def create_custom_dialog(self, title, message):
         dialog = tk.Toplevel(self.root)
@@ -292,14 +257,6 @@ class UpdateCheckerApp:
     def check_update(self, name):
         # Placeholder function to check for updates
         return "2.0"  # Dummy update version
-
-    def choose_log_location(self):
-        log_location = filedialog.askdirectory()
-        if log_location:
-            # Update log file locations
-            self.history_handler.baseFilename = f"{log_location}/update_history.log"
-            self.error_handler.baseFilename = f"{log_location}/error_log.log"
-            self.create_custom_dialog("Log Location Updated", f"Log files will be saved in: {log_location}")
 
 
 if __name__ == "__main__":
