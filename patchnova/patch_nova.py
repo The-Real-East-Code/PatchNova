@@ -116,6 +116,7 @@ class UpdateCheckerApp:
                                  fg=self.button_text_color, font=self.font_style)
         close_button.pack(pady=10)
 
+
     def setup_logging(self):
         # Create a logger
         self.logger = logging.getLogger("UpdateCheckerApp")
@@ -133,6 +134,7 @@ class UpdateCheckerApp:
         self.error_handler.setFormatter(formatter)
         self.logger.addHandler(self.error_handler)
 
+
     def get_hardware_info(self):
         system_info = platform.uname()
         info_text = f"System: {system_info.system}\nNode Name: {system_info.node}\n" \
@@ -140,60 +142,75 @@ class UpdateCheckerApp:
                     f"Machine: {system_info.machine}\nProcessor: {system_info.processor}"
         self.hardware_info_label.config(text=info_text)
 
+
     def get_user_consent(self):
-        return messagebox.askyesno("User Consent", "Do you want to check for updates?")
+        return messagebox.askyesno("User Consent", "Do you want to install your system updates?")
+
 
     def show_loading_indicator(self):
         self.loading_indicator.pack(pady=10)
         self.loading_indicator.start()
 
+
     def hide_loading_indicator(self):
         self.loading_indicator.stop()
         self.loading_indicator.pack_forget()
+
 
     def update_status_label(self, text):
         self.status_label.config(text=text)
         self.status_label.pack(pady=10)
 
+
     def check_updates(self):
         self.get_hardware_info()
+
         if self.get_user_consent():
-            # Check for updates based on the user's operating system
-            if platform.system() == 'Windows':
-                # Trigger Windows Update
-                subprocess.run(["powershell", "Install-Module PSWindowsUpdate -Force -AllowClobber"])
-                subprocess.run(["powershell", "Get-WindowsUpdate -Install -AcceptAll"])
-                self.logger.info("Windows Update checked")
+            
+            ask_if_should_update = messagebox.askyesno("User Consent", "Are you sure?")
 
-            elif platform.system() == 'Darwin':
-                # Trigger macOS Update
-                subprocess.run(["softwareupdate", "-i", "-a"])
-                self.logger.info("macOS Update checked")
+            if ask_if_should_update:
+                # Check for updates based on the user's operating system
+                if platform.system() == 'Windows':
+                    # Trigger Windows Update
+                    subprocess.run(["powershell", "Install-Module PSWindowsUpdate -Force -AllowClobber"])
+                    subprocess.run(["powershell", "Get-WindowsUpdate -Install -AcceptAll"])
+                    self.logger.info("Windows Update checked")
 
-            elif platform.system() == 'Linux':
-                # Use distro.id() to get the distribution ID as a string
-                dist_id = distro.id()
-                update_command = ""
-                if "ubuntu" in dist_id or "debian" in dist_id:
-                    update_command = "sudo apt-get update && sudo apt-get upgrade -y"
-                elif "fedora" in dist_id or "centos" in dist_id:
-                    update_command = "sudo dnf update -y"
-                elif "arch" in dist_id:
-                    update_command = "sudo pacman -Syu"
+                elif platform.system() == 'Darwin':
+                    # Trigger macOS Update
+                    subprocess.run(["softwareupdate", "-i", "-a"])
+                    self.logger.info("macOS Update checked")
+
+                elif platform.system() == 'Linux':
+                    # Use distro.id() to get the distribution ID as a string
+                    dist_id = distro.id()
+                    update_command = ""
+                    if "ubuntu" in dist_id or "debian" in dist_id:
+                        update_command = "sudo apt-get update"
+                    elif "fedora" in dist_id or "centos" in dist_id:
+                        update_command = "sudo dnf update"
+                    elif "arch" in dist_id:
+                        update_command = "sudo pacman -Syu"
+                    else:
+                        self.create_custom_dialog("Linux Update Information",
+                                                "Your Linux distribution is not supported for automatic updates through this script.")
+                        return
+                    self.create_custom_dialog("Update Information",
+                                            f"For your system ({dist_id}), use the following command to update:\n{update_command}")
+                    self.logger.info(f"Linux Update Information provided for {dist_id}")
+                    # Run the update command in the terminal
+                    subprocess.run(update_command.split())
+
                 else:
-                    self.create_custom_dialog("Linux Update Information",
-                                              "Your Linux distribution is not supported for automatic updates through this script.")
-                    return
-                self.create_custom_dialog("Update Information",
-                                          f"For your system ({dist_id}), use the following command to update:\n{update_command}")
-                self.logger.info(f"Linux Update Information provided for {dist_id}")
-                # Run the update command in the terminal
-                subprocess.run(update_command.split())
-
+                    self.create_custom_dialog("Unsupported System",
+                                            "Updates are not supported for the current operating system.")
+                self.logger.info("Update process completed.")
+            
             else:
-                self.create_custom_dialog("Unsupported System",
-                                          "Updates are not supported for the current operating system.")
-            self.logger.info("Update process completed.")
+                self.create_custom_dialog("User Does Not Consent",
+                                                "Understood. PatchNova will not install any updates on your system. Thank you.")
+
 
     def check_software_updates(self):
         if platform.system() == "Windows":
@@ -211,14 +228,13 @@ class UpdateCheckerApp:
 
         # Check updates
         for name, version in installed_programs.items():
-            update = self.check_update(name)  # Use self.check_update
-            if update:
-                listbox.insert(tk.END, f"{name}: {version} -> {update}")
+            listbox.insert(tk.END, f"{name}: {version}")
 
         # Add scrollbar
         scrollbar = Scrollbar(popup, command=listbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         listbox.config(yscrollcommand=scrollbar.set)
+
 
     def get_installed_programs_windows(self):
         installed_programs = {}
@@ -239,28 +255,11 @@ class UpdateCheckerApp:
         return installed_programs
 
 
-    # def get_installed_programs_mac(self):
-    #     installed_programs = {}
-    #     try:
-    #         output = subprocess.check_output(["/usr/sbin/system_profiler", "SPApplicationsDataType", "-xml"])
-    #         output = output.decode("utf-8").split("\n")
-    #         print(output)
-    #         for line in output:
-    #             if "<key>_name</key>" in line:
-    #                 name = line.split("<string>")[1].split("</string>")[0]
-    #             elif "<key>version</key>" in line:
-    #                 version = line.split("<string>")[1].split("</string>")[0]
-    #                 installed_programs[name] = version
-    #     except subprocess.CalledProcessError:
-    #         pass
-    #     return installed_programs
-    
     def get_installed_programs_mac(self):
         installed_programs = {}
         try:
             output = subprocess.check_output(["/usr/sbin/system_profiler", "SPApplicationsDataType", "-xml"])
             soup = BeautifulSoup(output, features='xml')
-
 
             for item in soup.find_all('dict'):
                 name_tag = item.find('key', string='_name')
@@ -275,16 +274,6 @@ class UpdateCheckerApp:
             pass
 
         return installed_programs
-
-
-    
-
-
-
-
-    def check_update(self, name):
-        # Placeholder function to check for updates
-        return "2.0"  # Dummy update version
 
 
 if __name__ == "__main__":
