@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar, Text
+from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar, Text, font
 import platform
 import subprocess
 import distro
@@ -223,8 +223,13 @@ class UpdateCheckerApp:
 
         # Create popup
         popup = tk.Toplevel(self.root)
-        listbox = Listbox(popup)
-        listbox.pack()
+        popup.geometry("500x600")  # Set the size of the popup window
+        popup.title("Installed Software")  # Set title
+        popup.configure(bg="dark gray")  # Set background color
+        # Customize font style for Listbox
+        listbox_font = font.Font(family="Helvetica", size=12, weight="bold")
+        listbox = Listbox(popup, font=listbox_font, bg="gray", fg="blue")  # Set font, background color, and foreground color
+        listbox.pack(side="left", fill="both", expand=True, padx=10, pady=10)  # Expand to fill the popup window, add padding
 
         # Check updates
         for name, version in installed_programs.items():
