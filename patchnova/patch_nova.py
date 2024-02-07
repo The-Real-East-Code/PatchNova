@@ -10,6 +10,7 @@ import pkgutil
 from bs4 import BeautifulSoup
 import urllib.request
 
+    
 if platform.system() == 'Windows':
     import winreg
 
@@ -20,17 +21,15 @@ class UpdateCheckerApp:
         self.root.title("Update Checker")
 
         # Increase the initial size of the main window
-        self.root.geometry('800x400')  # Adjust width and height as needed
+        self.root.geometry('1000x500')  # Adjust width and height as needed
         self.root.configure(bg='#333333')  # Dark background for the main window
 
         # Enhanced font and color configuration for larger UI elements
-        self.font_style = ("Consolas", 14)  # Increase font size
+        self.font_style = ("Consolas", 16)  # Increase font size
         self.button_color = "#15065c"
         self.text_color = "#FFFFFF"
         self.button_text_color = "#FFFFFF"
         self.label_bg_color = "#333333"
-
-     
 
         
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
@@ -239,20 +238,49 @@ class UpdateCheckerApp:
             pass
         return installed_programs
 
+
+    # def get_installed_programs_mac(self):
+    #     installed_programs = {}
+    #     try:
+    #         output = subprocess.check_output(["/usr/sbin/system_profiler", "SPApplicationsDataType", "-xml"])
+    #         output = output.decode("utf-8").split("\n")
+    #         print(output)
+    #         for line in output:
+    #             if "<key>_name</key>" in line:
+    #                 name = line.split("<string>")[1].split("</string>")[0]
+    #             elif "<key>version</key>" in line:
+    #                 version = line.split("<string>")[1].split("</string>")[0]
+    #                 installed_programs[name] = version
+    #     except subprocess.CalledProcessError:
+    #         pass
+    #     return installed_programs
+    
     def get_installed_programs_mac(self):
         installed_programs = {}
         try:
             output = subprocess.check_output(["/usr/sbin/system_profiler", "SPApplicationsDataType", "-xml"])
-            output = output.decode("utf-8").split("\n")
-            for line in output:
-                if "<key>_name</key>" in line:
-                    name = line.split("<string>")[1].split("</string>")[0]
-                elif "<key>version</key>" in line:
-                    version = line.split("<string>")[1].split("</string>")[0]
+            soup = BeautifulSoup(output, features='xml')
+
+
+            for item in soup.find_all('dict'):
+                name_tag = item.find('key', string='_name')
+                version_tag = item.find('key', string='version')
+
+                if name_tag and version_tag:
+                    name = name_tag.find_next('string').text
+                    version = version_tag.find_next('string').text
                     installed_programs[name] = version
+
         except subprocess.CalledProcessError:
             pass
+
         return installed_programs
+
+
+    
+
+
+
 
     def check_update(self, name):
         # Placeholder function to check for updates
