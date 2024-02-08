@@ -52,7 +52,7 @@ def show_logs(self): # Test the show_logs method
     log_dialog = tk.Toplevel(self.root) 
     log_dialog.title("Logs")
     log_dialog.geometry("800x600")
-    log_dialog.configure(bg='#333333')
+    log_dialog.configure(bg='#fb8200')
 
 def test_create_custom_dialog(app): # Test the create_custom_dialog method
     title = "Test Title"
@@ -61,5 +61,5 @@ def test_create_custom_dialog(app): # Test the create_custom_dialog method
          patch.object(tk.Toplevel, "configure") as mock_configure, \
          patch('tkinter.Label') as mock_label, \
          patch('tkinter.Button') as mock_button:
-        app.create_custom_dialog(title, message)
+        app.create_custom_dialog(title, message, 500, 500)
         mock_title.assert_any_call(title)

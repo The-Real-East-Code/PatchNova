@@ -3,6 +3,7 @@ import platform
 from bs4 import BeautifulSoup
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar, Text, font
+import ctypes
 
 if platform.system() == 'Windows':
     import winreg
@@ -25,7 +26,7 @@ def check_software(self, root):
     popup.configure(bg="dark gray")  # Set background color
     # CUSTOMIZE FONT STYLE FOR LISTBOX
     listbox_font = font.Font(family="Helvetica", size=12, weight="bold")
-    listbox = Listbox(popup, font=listbox_font, bg="gray", fg="blue")  # Set font, background color, and foreground color
+    listbox = Listbox(popup, font=listbox_font, bg="#2c99b4", fg="blue")  # Set font, background color, and foreground color
     listbox.pack(side="left", fill="both", expand=True, padx=10, pady=10)  # Expand to fill the popup window, add padding
 
     # CHECK UPDATES
@@ -37,6 +38,13 @@ def check_software(self, root):
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
     listbox.config(yscrollcommand=scrollbar.set)
 
+
+# WINDOWS LOGIC
+def is_admin():
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
 
 def get_installed_programs_windows(self):
     installed_programs = {}

@@ -5,7 +5,7 @@ def show_log(self, root):
         log_dialog = tk.Toplevel(root)
         log_dialog.title("Logs")
         log_dialog.geometry("800x600")  # Adjust size as needed
-        log_dialog.configure(bg='#333333')
+        log_dialog.configure(bg='#fb8200')
         tab_control = ttk.Notebook(log_dialog)  # Define tab_control variable
         # HISTORY LOGGING
         update_history_tab = ttk.Frame(tab_control)
