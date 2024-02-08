@@ -1,4 +1,4 @@
-# <h1 align="center">PatchNova</h1>
+<h1 align="center">PatchNova</h1>
 
 **Revolutionizing Updates:** The Ultimate Ally for DevOps and System Management
 
