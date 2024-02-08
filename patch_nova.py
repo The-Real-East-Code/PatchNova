@@ -8,7 +8,10 @@ import subprocess
 import distro
 import logging
 from logging.handlers import RotatingFileHandler
-
+from PIL import Image, ImageTk
+import ctypes
+import sys
+import os
 
 class UpdateCheckerApp:
     def __init__(self, root):
@@ -16,13 +19,14 @@ class UpdateCheckerApp:
         self.root.title("Update Checker")
         # INCREASE THE INITIAL SIZE OF THE MAIN WINDOW
         self.root.geometry('1000x500')  # Adjust width and height as needed
-        self.root.configure(bg='#333333')  # Dark background for the main window
+        self.root.configure(bg='#fb8200')  # Dark background for the main window
+        # root.attributes('-alpha',"0.5")
         # ENHANCED FONT AND COLOR CONFIGURATION FOR LARGER UI ELEMENTS
         self.font_style = ("Consolas", 16)  # Increase font size
         self.button_color = "#15065c"
         self.text_color = "#FFFFFF"
         self.button_text_color = "#FFFFFF"
-        self.label_bg_color = "#333333"
+        self.label_bg_color = "#2c99b4"
         # HARDWARE INFO LABEL
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # Increase vertical padding
@@ -39,6 +43,7 @@ class UpdateCheckerApp:
         self.check_updates_button.pack(pady=10)  # Increase vertical padding
         self.check_software_updates_button = tk.Button(root, text="Check Installed Software", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
+        self.logger = logging.getLogger("UpdateCheckerApp")
         self.show_logs_button = tk.Button(root, text="Show Logs", command=self.show_logs, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         # self.show_logs_button = tk.Button(root, text="Show Logs", command=lambda: show_logs(self, self.root), bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.show_logs_button.pack(pady=10)
@@ -56,7 +61,6 @@ class UpdateCheckerApp:
 
     def setup_logging(self):
         # Create a logger
-        self.logger = logging.getLogger("UpdateCheckerApp")
         self.logger.setLevel(logging.DEBUG)
         # Create a formatter and add it to the handler
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -110,8 +114,20 @@ class UpdateCheckerApp:
                 # Check for updates based on the user's operating system
                 if platform.system() == 'Windows':
                     # Trigger Windows Update
-                    subprocess.run(["powershell", "Install-Module PSWindowsUpdate -Force -AllowClobber"])
-                    subprocess.run(["powershell", "Get-WindowsUpdate -Install -AcceptAll"])
+                    subprocess.run(["powershell", "Install-Module PSWindowsUpdate -Force -AllowClobber -Scope CurrentUser"])
+                    def is_admin():
+                        try:
+                            return ctypes.windll.shell32.IsUserAnAdmin()
+                        except:
+                            return False
+
+                    if is_admin():
+                        # Your code that needs admin rights goes here
+                        command = "Get-WindowsUpdate -Install -AcceptAll"
+                        os.system(f'powershell -Command "{command}"')
+                    else:
+                        # Re-run the script with admin rights
+                        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
                     self.logger.info("Windows Update checked")
 
                 elif platform.system() == 'Darwin':
@@ -147,9 +163,22 @@ class UpdateCheckerApp:
             else:
                 self.create_custom_dialog("User Does Not Consent",
                                                 "Understood. PatchNova will not install any updates on your system. Thank you.")
-
-
 if __name__ == "__main__":
+
+    def set_background_with_label(root, image_path):
+        # If using Pillow, open the image with Pillow and convert it to a format tkinter can use
+        image = Image.open(image_path)
+        # image = image.resize((root.winfo_screenwidth(), root.winfo_screenheight()), Image.Resampling.LANCZOS)
+        photo = ImageTk.PhotoImage(image)
+
+        label = tk.Label(root, image=photo)
+        label.place(x=0, y=0, relwidth=1, relheight=1)  # Make the label cover the whole window
+
+        # Keep a reference to the image to prevent garbage collection
+        label.image = photo
+
+    image_path = "PatchNovaLogo2.png"
     root = tk.Tk()
+    set_background_with_label(root, image_path)
     app = UpdateCheckerApp(root)
     root.mainloop()
