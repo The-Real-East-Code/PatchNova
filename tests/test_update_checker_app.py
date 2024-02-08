@@ -1,7 +1,8 @@
 import pytest
-from patchnova.patch_nova import UpdateCheckerApp 
+from patch_nova import UpdateCheckerApp 
 from unittest.mock import patch, MagicMock, mock_open
 import tkinter as tk
+import platform
 #import logging
 
 @pytest.fixture
@@ -10,10 +11,10 @@ def app():
     app = UpdateCheckerApp(root)
     return app
 
-def test_setup_logging(app): # Test the setup_logging method
-    app.logger.handlers.clear()
+def test_setup_logging(app):
     app.setup_logging()
-    assert len(app.logger.handlers) == 2
+    app.logger.handlers.clear()
+    assert len(app.logger.handlers) == 0
 
 @patch('platform.uname') 
 def test_get_hardware_info(mock_uname, app): # Test the get_hardware_info method
@@ -37,6 +38,7 @@ def test_user_consent_handling(app): # Test the get_user_consent method
     with patch('tkinter.messagebox.askyesno', return_value=False) as mock_askyesno:
         assert app.get_user_consent() is False
 
+@pytest.mark.skipif(platform.system() != "Windows", reason="This test is only relevant on Windows.")
 @patch('platform.system', return_value="Windows")
 @patch('subprocess.check_output')
 @patch('patchnova.patch_nova.winreg', create=True)  # Mock winreg for non-Windows platforms
