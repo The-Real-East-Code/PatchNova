@@ -171,7 +171,7 @@ class UpdateCheckerApp:
 
 
 if __name__ == "__main__":
-    image_path = "PatchNovaLogo2.png"
+    image_path = "assets/PatchNovaLogo2.png"
     root = tk.Tk()
     set_background_with_label(root, image_path)
     app = UpdateCheckerApp(root)
