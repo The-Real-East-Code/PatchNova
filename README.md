@@ -1,4 +1,4 @@
-<h1 align="center">PatchNova</h1>
+# PatchNova
 
 **Revolutionizing Updates:** The Ultimate Ally for DevOps and System Management
 
