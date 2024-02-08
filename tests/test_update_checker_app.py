@@ -61,5 +61,5 @@ def test_create_custom_dialog(app): # Test the create_custom_dialog method
          patch.object(tk.Toplevel, "configure") as mock_configure, \
          patch('tkinter.Label') as mock_label, \
          patch('tkinter.Button') as mock_button:
-        app.create_custom_dialog(title, message)
+        app.create_custom_dialog(title, message, 500, 500)
         mock_title.assert_any_call(title)

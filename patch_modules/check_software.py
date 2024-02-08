@@ -3,6 +3,7 @@ import platform
 from bs4 import BeautifulSoup
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar, Text, font
+import ctypes
 
 if platform.system() == 'Windows':
     import winreg
@@ -37,6 +38,13 @@ def check_software(self, root):
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
     listbox.config(yscrollcommand=scrollbar.set)
 
+
+# WINDOWS LOGIC
+def is_admin():
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
 
 def get_installed_programs_windows(self):
     installed_programs = {}

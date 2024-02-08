@@ -1,8 +1,8 @@
 https://github.com/github/gitignore/blob/main/Python.gitignore
 
-set_background_img.py
 legalscraper.py
 .style.css
+.vscode
 .vercel
 .venv
 .venv/
