@@ -41,7 +41,7 @@ def test_user_consent_handling(app): # Test the get_user_consent method
 @pytest.mark.skipif(platform.system() != "Windows", reason="This test is only relevant on Windows.")
 @patch('platform.system', return_value="Windows")
 @patch('subprocess.check_output')
-@patch('patchnova.patch_nova.winreg', create=True)  # Mock winreg for non-Windows platforms
+@patch('patch_nova.winreg', create=True)  # Mock winreg for non-Windows platforms
 def test_display_installed_software_windows(mock_winreg, mock_subprocess, mock_system, app): # Test the display_installed_software method
     mock_subprocess.return_value = b'Windows mock output'
     app.check_software_updates()
