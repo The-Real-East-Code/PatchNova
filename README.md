@@ -135,7 +135,7 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
 
 ### 4.2 Wireframes
 
-![Wireframe](assets/wireframe.png)
+![Wireframe](assets/Wireframe.png)
 
 ### 4.3 Key Technologies
 
