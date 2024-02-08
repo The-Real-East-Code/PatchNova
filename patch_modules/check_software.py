@@ -79,7 +79,7 @@ def get_installed_programs_mac(self):
 def get_installed_programs_linux(self):
     installed_programs = {}
     try:
-        list_packages_command = "apt list --upgradable"
+        list_packages_command = "apt list --installed"
         output = subprocess.check_output(list_packages_command.split())
         output = output.decode("utf-8").split("\n")
         i = 1

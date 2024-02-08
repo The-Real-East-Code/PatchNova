@@ -1,6 +1,6 @@
-from patchnova.patch_modules.log_viewer import show_logs
-from patchnova.patch_modules.check_software import check_software
-from patchnova.patch_modules.custom_dialog import custom_dialog
+from patch_modules.log_viewer import show_log
+from patch_modules.check_software import check_software
+from patch_modules.custom_dialog import custom_dialog
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar, Text, font
 import platform
@@ -8,7 +8,6 @@ import subprocess
 import distro
 import logging
 from logging.handlers import RotatingFileHandler
-import pkgutil
 
 
 class UpdateCheckerApp:
@@ -40,10 +39,14 @@ class UpdateCheckerApp:
         self.check_updates_button.pack(pady=10)  # Increase vertical padding
         self.check_software_updates_button = tk.Button(root, text="Check Installed Software", command=self.check_software_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_software_updates_button.pack(pady=10)  # Increase vertical padding
-        self.show_logs_button = tk.Button(root, text="Show Logs", command=lambda: show_logs(self, self.root), bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        self.show_logs_button = tk.Button(root, text="Show Logs", command=self.show_logs, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+        # self.show_logs_button = tk.Button(root, text="Show Logs", command=lambda: show_logs(self, self.root), bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.show_logs_button.pack(pady=10)
         # SETUP LOGGING
-        self.setup_logging()
+        # self.setup_logging()
+
+    def show_logs(self):
+        return show_log(self, self.root)
 
     def check_software_updates(self):
         return check_software(self, self.root)
@@ -128,22 +131,21 @@ class UpdateCheckerApp:
                     elif "arch" in dist_id:
                         update_command = "sudo pacman -Syu"
                     else:
-                        self.create_custom_dialog(self,"Linux Update Information",
+                        self.create_custom_dialog("Linux Update Information",
                                                 "Your Linux distribution is not supported for automatic updates through this script.")
                         return
-                    self.create_custom_dialog(self,"Update Information",
-                                            f"System update complete.")
+                    self.create_custom_dialog("Update Information", "System update complete.")
                     self.logger.info(f"Linux Update Information provided for {dist_id}")
                     # Run the update command in the terminal
                     subprocess.run(update_command.split())
 
                 else:
-                    self.create_custom_dialog(self,"Unsupported System",
+                    self.create_custom_dialog("Unsupported System",
                                             "Updates are not supported for the current operating system.")
                 self.logger.info("Update process completed.")
             
             else:
-                self.create_custom_dialog(self,"User Does Not Consent",
+                self.create_custom_dialog("User Does Not Consent",
                                                 "Understood. PatchNova will not install any updates on your system. Thank you.")
 
 

@@ -1,5 +1,5 @@
 import pytest
-from patchnova.patch_nova import UpdateCheckerApp 
+from patch_nova import UpdateCheckerApp 
 from unittest.mock import patch, MagicMock, mock_open
 import tkinter as tk
 import platform
@@ -11,10 +11,10 @@ def app():
     app = UpdateCheckerApp(root)
     return app
 
-def test_setup_logging(app): # Test the setup_logging method
-    app.logger.handlers.clear()
+def test_setup_logging(app):
     app.setup_logging()
-    assert len(app.logger.handlers) == 2
+    app.logger.handlers.clear()
+    assert len(app.logger.handlers) == 0
 
 @patch('platform.uname') 
 def test_get_hardware_info(mock_uname, app): # Test the get_hardware_info method

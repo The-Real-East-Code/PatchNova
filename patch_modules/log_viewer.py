@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Text
 
-def show_logs(self, root):
+def show_log(self, root):
         log_dialog = tk.Toplevel(root)
         log_dialog.title("Logs")
         log_dialog.geometry("800x600")  # Adjust size as needed
