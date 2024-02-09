@@ -1,3 +1,4 @@
+import os
 import psutil
 import time
 import csv
@@ -31,20 +32,39 @@ def calculate_cpu_percentages(start_times, end_times, interval, total_cpu_time):
 def get_win_proc_by_cpu_percentage():
     interval = 10  # Sampling interval in seconds
     total_cpus = psutil.cpu_count()
+    
     # Get the total CPU time available during the interval
     total_cpu_time = total_cpus * interval
+    
     # Get initial CPU times of processes
     start_cpu_times = get_process_cpu_times()
+    
     # Wait for the specified interval
     time.sleep(interval)
+    
     # Get final CPU times of processes
     end_cpu_times = get_process_cpu_times()
+    
     # Calculate CPU usage percentages
     cpu_percentages = calculate_cpu_percentages(start_cpu_times, end_cpu_times, interval, total_cpu_time)
+    
     # Sort processes by CPU usage and prepare the data for the CSV
     top_processes = sorted(cpu_percentages.items(), key=lambda x: x[1][1], reverse=True)[:10]
+    
     # Write to CSV file
-    csv_file_name = '_Win_processes_by_cpu_usage.csv'
+
+    # Path for the new directory
+    notes_directory_path = '.notes'
+
+    # Check if the directory already exists
+    if not os.path.exists(notes_directory_path):
+        # Create the directory
+        os.makedirs(notes_directory_path)
+        print(f"Directory '{notes_directory_path}' was created.")
+    else:
+        print(f"Directory '{notes_directory_path}' already exists.")
+
+    csv_file_name = '.notes\\_Win_processes_by_cpu_usage.csv'
     with open(csv_file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Process Name", "PID", "CPU Usage (%)"])
@@ -56,7 +76,7 @@ def get_win_proc_by_cpu_percentage():
 
 def plot_win_cpu_usage_from_csv():
     get_win_proc_by_cpu_percentage()
-    csv_file_name = '_Win_processes_by_cpu_usage.csv'
+    csv_file_name = '.notes\\_Win_processes_by_cpu_usage.csv'
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file_name)
     # Sort the DataFrame by CPU Usage in descending order

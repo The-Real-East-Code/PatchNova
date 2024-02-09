@@ -31,7 +31,7 @@ class UpdateCheckerApp:
         self.text_color = "#FFFFFF"
         self.button_text_color = "#FFFFFF"
         self.label_bg_color = "#2c99b4"
-    
+
         # HARDWARE INFO LABEL
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # INCREASE VERTICAL PADDING
@@ -59,17 +59,17 @@ class UpdateCheckerApp:
 
         # SHOW TOP 10 PROCESSES FOR WINDOWS
         if platform.system() == 'Windows':
-            self.show_win_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_windows_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_win_proc_button = tk.Button(root, text=f"%CPU Usage(10 Secs)", command=self.get_windows_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
             self.show_win_proc_button.pack(pady=10)
 
         # SHOW TOP 10 PROCESSES FOR LINUX
         if platform.system() == 'Linux':
-            self.show_linux_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_linux_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_linux_proc_button = tk.Button(root, text="%CPU Usage (10 Secs)", command=self.get_linux_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
             self.show_linux_proc_button.pack(pady=10)
     
         if platform.system() == 'Darwin':
             # SHOW TOP 10 PROCESSES FOR LINUX
-            self.show_mac_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_mac_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_mac_proc_button = tk.Button(root, text="%CPU Usage (10 Secs)", command=self.get_mac_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
             self.show_mac_proc_button.pack(pady=10)
 
         # SHOW ABOUT BUTTON
