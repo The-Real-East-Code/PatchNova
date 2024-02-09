@@ -5,11 +5,16 @@ import matplotlib.pyplot as plt
 
 def capture_cpu_usage(interval, csv_file_name):
     # Initial capture of CPU times
-    initial_cpu_times = {p.pid: p.cpu_times() for p in psutil.process_iter() if p.pid != 0}
+    initial_cpu_times = {p.pid: p.cpu_times() for p in psutil.process_iter() if p.pid != 0 and p.status() != psutil.STATUS_ZOMBIE}
     # Wait for the interval
     time.sleep(interval)
     # Final capture of CPU times
-    final_cpu_times = {p.pid: p.cpu_times() for p in psutil.process_iter() if p.pid != 0}
+    final_cpu_times = {p.pid: p.cpu_times() for p in psutil.process_iter() if p.pid != 0 and p.status() != psutil.STATUS_ZOMBIE}
+
+    # Log PIDs of zombie processes
+    zombie_processes = [p.pid for p in psutil.process_iter() if p.status() == psutil.STATUS_ZOMBIE]
+    if zombie_processes:
+        print(f"Zombie Processes: {zombie_processes}")
 
     # Calculate CPU usage
     cpu_usage_data = []
@@ -23,7 +28,6 @@ def capture_cpu_usage(interval, csv_file_name):
     df = pd.DataFrame(cpu_usage_data, columns=['PID', 'Process Name', 'CPU Usage (%)'])
     df.sort_values(by='CPU Usage (%)', ascending=False, inplace=True)
     df.head(10).to_csv(csv_file_name, index=False)
-
 
 def plot_cpu_usage_from_csv(csv_file_name):
     # Read the CSV file
