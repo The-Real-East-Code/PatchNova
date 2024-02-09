@@ -1,0 +1,11 @@
+PID,Process Name,CPU Usage (%)
+158,WindowServer,31.53068032001102
+546,avconferenced,11.308892160009236
+1512,Code Helper (GPU),6.80722431999925
+486,Google Chrome Helper (GPU),5.557452800003375
+3009,Google Chrome Helper (Renderer),4.876533760000825
+718,VTEncoderXPCService,4.871946240002671
+45870,Code Helper (Plugin),4.107796480000028
+45877,Code Helper (Renderer),3.6586956799999815
+45812,Google Chrome Helper (Renderer),3.3258086400000053
+13943,Google Chrome Helper (Renderer),2.635857920001854
