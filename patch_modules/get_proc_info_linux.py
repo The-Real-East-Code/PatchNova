@@ -1,3 +1,4 @@
+import os
 import psutil
 import time
 import pandas as pd
@@ -44,8 +45,19 @@ def plot_cpu_usage_from_csv(csv_file_name):
     plt.show()
 
 def plot_linux_cpu_usage_from_csv():
+     # Path for the new directory
+    notes_directory_path = '.notes'
+
+    # Check if the directory already exists
+    if not os.path.exists(notes_directory_path):
+        # Create the directory
+        os.makedirs(notes_directory_path)
+        print(f"Directory '{notes_directory_path}' was created.")
+    else:
+        print(f"Directory '{notes_directory_path}' already exists.")
+
+    csv_file_name = '.notes/mac_top_processes_by_cpu_usage.csv'
     interval = 10  # Interval in seconds
-    csv_file_name = 'linux_processes_by_cpu_usage.csv'
     # Capture CPU usage and save to CSV
     capture_cpu_usage(interval, csv_file_name)
     # Plot the CPU usage data from the CSV file
