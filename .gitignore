@@ -1,6 +1,8 @@
 https://github.com/github/gitignore/blob/main/Python.gitignore
 
 legalscraper.py
+.notes/*
+.history
 .style.css
 .vscode
 .vercel

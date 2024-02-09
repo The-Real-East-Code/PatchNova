@@ -7,7 +7,6 @@
     <img src="https://visitor-badge.laobi.icu/badge?page_id=The-East-Code.PatchNova" alt="Visitors" />
 </div>
 
-
 <p align="center">
    <img width="550" alt="patchnova" src="assets/mascot.png">
 </p>
@@ -23,31 +22,42 @@
   <img src="https://user-images.githubusercontent.com/74038190/216122041-518ac897-8d92-4c6b-9b3f-ca01dcaf38ee.png" alt="Fire" width="40" />
 </div>
 
-
 ## Table of Contents
 
-1. [Team: The East Code](#team-the-east-code)
-2. [Dates](#dates)
-3. [Team Members](#team-members)
-4. [Project Description](#project-description)
-
-   4.1 [Overview](#overview)
-
-   4.2 [Wireframes](#wireframes)
-
-   4.3 [Key Technologies](#key-technologies)
-
-   4.4 [Wiki Documentation](#wiki-documentation)
-
-5. [Links and Resources](#links-and-resources)
-6. [Dependencies](#dependencies)
-7. [Installation](#installation)
-8. [Testing](#testing)
-9. [Usage](#usage)
-10. [Future Enhancements](#future-enhancements)
-11. [Changelog](#changelog)
-12. [Screenshot of Live Demo](#screenshot-of-live-demo)
-13. Acknowledgements
+- [PatchNova](#patchnova)
+  - [Table of Contents](#table-of-contents)
+  - [Dates](#dates)
+  - [Team Members: The East Code](#team-members-the-east-code)
+  - [Project Description](#project-description)
+    - [4.1 Overview](#41-overview)
+    - [4.2 Wireframes](#42-wireframes)
+    - [4.3 Key Technologies](#43-key-technologies)
+    - [4.4 Wiki Documentation](#44-wiki-documentation)
+  - [Links and Resources](#links-and-resources)
+  - [Dependencies](#dependencies)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Features](#features)
+  - [Testing](#testing)
+    - [`test_update_check.py`](#test_update_checkpy)
+  - [Future Enhancements](#future-enhancements)
+  - [Changelog](#changelog)
+    - [Version 1.0.0 (02/04/2024)](#version-100-02042024)
+      - [Added](#added)
+      - [Changed](#changed)
+      - [Removed](#removed)
+      - [Fixed](#fixed)
+    - [Version 1.0.1 (02/05/2024)](#version-101-02052024)
+      - [Added](#added-1)
+      - [Changed](#changed-1)
+    - [Version 1.0.2 (02/06/2024)](#version-102-02062024)
+      - [Added](#added-2)
+      - [Changed](#changed-2)
+    - [Version 1.0.3 (02/07/2024)](#version-103-02072024)
+      - [Added](#added-3)
+      - [Removed](#removed-1)
+  - [Screenshot of Live Demo](#screenshot-of-live-demo)
+  - [   Acknowledgements   ](#--acknowledgements--)
 
 ## Dates
 
@@ -67,14 +77,11 @@ Presentation Date: 2.9.2024
 
 - [x] [Niles Thompson](https://github.com/Niles086)
 
-
-
 ## Project Description
 
 Revolutionize your update experience with PatchNova – the ultimate ally for DevOps, Systems Engineers, and System Admins. Unleash the power of seamless, automated updates that transcend the mundane. 
 
 PatchNova isn't just an update manager; it's your key to conquering the update realm effortlessly. Tailored for IT professionals handling multiple systems, PatchNova ensures synchronized updates, eliminating the need for manual interventions. With its intuitive interface, automated checks, and robust user consent control, PatchNova empowers you to elevate your systems to new heights. Stay ahead, stay secure, and let PatchNova redefine your update journey!
-
 
 ### 4.1 Overview
 
@@ -158,7 +165,6 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
 5. **Python-Dotenv (python-dotenv):**
    - Loads environment variables from a .env file.
    - Ensures secure and convenient configuration of environment variables.
-
 
 ### 4.4 Wiki Documentation
 
@@ -253,7 +259,7 @@ python3 patch_nova.py
 
 This will launch the PatchNova application, providing a user-friendly interface for checking system updates, installed software, and viewing logs.
 
-## Features:
+## Features
 
 1. **Check System Updates:**
    - Click on the "System Updates" button to initiate a check for updates on your operating system.
@@ -276,7 +282,6 @@ This will launch the PatchNova application, providing a user-friendly interface 
 **Note:** Ensure that you have the necessary permissions to install system updates, especially when running on Linux, and that you have the appropriate package manager installed.
 
 <img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/assets/74038190/80728820-e06b-4f96-9c9e-9df46f0cc0a5" width="600">
-
 
 ## Testing
 
@@ -390,7 +395,6 @@ This will launch the PatchNova application, providing a user-friendly interface 
 
 These future enhancements aim to broaden the capabilities of PatchNova, providing users with more control and comprehensive coverage in managing updates across their computing environment.
 
-
 ## Changelog
 
 ### Version 1.0.0 (02/04/2024)
@@ -447,9 +451,7 @@ These future enhancements aim to broaden the capabilities of PatchNova, providin
 
 - **[Redundant Code]** Removed redundant code that was not contributing to the functionality.
 
-
 ## Screenshot of Live Demo
-
 
 Actual size: 1000x500
 
@@ -466,4 +468,3 @@ We would like to express our gratitude to the open-source community for providin
 		<img src="https://media.giphy.com/media/uj8YbXjNuwZ7iFRD4n/giphy.gif" width="400px">
 	<br>
 </div>
-

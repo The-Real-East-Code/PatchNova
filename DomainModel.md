@@ -1,5 +1,6 @@
 # Domain Modeling
 
+```txt
 +---------------------+
 |      Main Screen    |
 |    - Update Checker |
@@ -70,3 +71,4 @@
 |     software updates,|
 |     log location)    |
 +---------------------+
+```

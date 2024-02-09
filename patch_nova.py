@@ -2,6 +2,9 @@ from patch_modules.log_viewer import show_log
 from patch_modules.check_software import check_software, is_admin
 from patch_modules.custom_dialog import custom_dialog, get_user_consent
 from patch_modules.set_bg_image import set_background_with_label
+from patch_modules.get_proc_info_windows import plot_win_cpu_usage_from_csv
+from patch_modules.get_proc_info_linux import plot_linux_cpu_usage_from_csv
+from patch_modules.get_proc_info_mac import plot_mac_cpu_usage_from_csv
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 import platform
@@ -17,27 +20,33 @@ class UpdateCheckerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Update Checker")
+
         # INCREASE THE INITIAL SIZE OF THE MAIN WINDOW
         self.root.geometry('1000x500')
         self.root.configure(bg='#fb8200')
-        # root.attributes('-alpha',"0.5")
+
         # ENHANCED FONT AND COLOR CONFIGURATION FOR LARGER UI ELEMENTS
         self.font_style = ("Consolas", 16)
         self.button_color = "#15065c"
         self.text_color = "#FFFFFF"
         self.button_text_color = "#FFFFFF"
         self.label_bg_color = "#2c99b4"
+    
         # HARDWARE INFO LABEL
         self.hardware_info_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
         self.hardware_info_label.pack(pady=20)  # INCREASE VERTICAL PADDING
+    
         # DISPLAY HARDWARE INFORMATION
         self.hardware_info_label = tk.Label(root, text="")
         self.hardware_info_label.pack()
         self.get_hardware_info()
+    
         # LOADING INDICATOR
         self.loading_indicator = ttk.Progressbar(root, orient="horizontal", mode="indeterminate")
+    
         # STATUS LABEL
         self.status_label = tk.Label(root, text="", bg=self.label_bg_color, fg=self.text_color, font=self.font_style)
+    
         # LARGER BUTTONS WITH INCREASED PADDING
         self.check_updates_button = tk.Button(root, text="Install System Updates", command=self.check_updates, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.check_updates_button.pack(pady=10)  # INCREASE VERTICAL PADDING
@@ -47,11 +56,37 @@ class UpdateCheckerApp:
         self.show_logs_button = tk.Button(root, text="Show Logs", command=self.show_logs, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         # self.show_logs_button = tk.Button(root, text="Show Logs", command=lambda: show_logs(self, self.root), bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.show_logs_button.pack(pady=10)
+
+        # SHOW TOP 10 PROCESSES FOR WINDOWS
+        if platform.system() == 'Windows':
+            self.show_win_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_windows_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_win_proc_button.pack(pady=10)
+
+        # SHOW TOP 10 PROCESSES FOR LINUX
+        if platform.system() == 'Linux':
+            self.show_linux_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_linux_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_linux_proc_button.pack(pady=10)
+    
+        if platform.system() == 'Darwin':
+            # SHOW TOP 10 PROCESSES FOR LINUX
+            self.show_mac_proc_button = tk.Button(root, text="CPU USAGE (10 Secs)", command=self.get_mac_processes, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
+            self.show_mac_proc_button.pack(pady=10)
+
+        # SHOW ABOUT BUTTON
         self.show_about_patchnova = tk.Button(root, text="About PatchNova", command=self.show_about, bg=self.button_color, fg=self.button_text_color, font=self.font_style)
-        # self.show_logs_button = tk.Button(root, text="Show Logs", command=lambda: show_logs(self, self.root), bg=self.button_color, fg=self.button_text_color, font=self.font_style)
         self.show_about_patchnova.pack(pady=10)
+
         # SETUP LOGGING
         self.setup_logging()
+
+    def get_windows_processes(self):
+        return plot_win_cpu_usage_from_csv()
+
+    def get_linux_processes(self):
+        return plot_linux_cpu_usage_from_csv()
+    
+    def get_mac_processes(self):
+        return plot_mac_cpu_usage_from_csv()
 
     def get_user_consent(self):
         return messagebox.askyesno("User Consent", "Do you want to proceed?")
