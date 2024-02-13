@@ -177,7 +177,7 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
     </thead>
     <tbody>
         <tr>
-            <td><a href="https://github.com/The-East-Code/DevState/wiki/Team-Agreement">Team Agreement</a></td>
+            <td><a href="https://github.com/The-Real-East-Code/PatchNova/wiki/Team-Agreement">Team Agreement</a></td>
             <td>Agreement among team members</td>
         </tr>
         <tr>
@@ -189,7 +189,7 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
             <td>Ideas pitched for the project</td>
         </tr>
         <tr>
-            <td><a href="https://github.com/The-East-Code/PatchNova/wiki/PatchNova">PatchNova - Selected Idea</a></td>
+            <td><a href="https://github.com/The-Real-East-Code/PatchNova/wiki/PatchNova-Official">PatchNova - Selected Idea</a></td>
             <td>Selected idea for the project</td>
         </tr>
         <tr>
@@ -197,7 +197,7 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
             <td>Visual representation of the project's wireframe</td>
         </tr>
         <tr>
-            <td><a href="https://github.com/The-East-Code/PatchNova/wiki/User-Stories">User Stories</a></td>
+            <td><a href="https://github.com/The-Real-East-Code/PatchNova/wiki/User-Stories">User Stories</a></td>
             <td>User stories for the project</td>
         </tr>
         <tr>
@@ -205,7 +205,7 @@ PatchNova isn't just an update manager; it's your key to conquering the update r
             <td>Visual representation of the project's domain modeling</td>
         </tr>
         <tr>
-            <td><a href="https://github.com/The-East-Code/PatchNova/wiki/Software-Requirements">Software Requirements</a></td>
+            <td><a href="https://github.com/The-Real-East-Code/PatchNova/wiki/Software-Requirements">Software Requirements</a></td>
             <td>Requirements for the software</td>
         </tr>
     </tbody>
